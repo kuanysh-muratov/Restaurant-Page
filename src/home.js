@@ -1,77 +1,91 @@
 import Bee from "./bee.svg";
 
-function createContainer(){
-    const content=document.querySelector("#content");
-    const container=document.createElement("div");
-    container.classList.add("container");
-    content.appendChild(container);
-}
+class RestaurantPage {
+  constructor(contentId) {
+    this.content = document.querySelector(contentId);
+    this.container = null;
+  }
 
-function createTitleAndCards(text){
-    const container=document.querySelector(".container");
+  createHomePage() {
+    this.createContainer();
+    this.createTitleAndCards("Beary's Breakfast Bar");
+    this.createTestimonialCard();
+    this.createHoursCard();
+    this.createLocationCard();
+  }
 
-    const title=document.createElement("div");
-    title.classList.add("title");
-    title.textContent=text;
+  createContainer() {
+    this.container = document.createElement("div");
+    this.container.classList.add("container");
+    this.content.appendChild(this.container);
+  }
 
-    const leftBee = new Image();
-    leftBee.src=Bee;
-    leftBee.classList.add('left');
+  createTitleAndCards(text) {
+    const title = this.createElement("div", ["title"], { textContent: text });
+    const leftBee = this.createImage(Bee, ["left"]);
+    const rightBee = this.createImage(Bee, ["right"]);
 
-    const rightBee = new Image();
-    rightBee.src=Bee;
-    rightBee.classList.add('right');
+    title.append(leftBee, rightBee);
+    this.container.appendChild(title);
 
-    title.appendChild(leftBee);
-    title.appendChild(rightBee);
-    container.appendChild(title);
+    const cards = this.createElement("div", ["cards"]);
+    this.container.appendChild(cards);
+  }
 
-    const cards=document.createElement("div");
-    cards.classList.add("cards");
-    container.appendChild(cards);
-}
+  createTestimonialCard() {
+    const card = this.createCard();
+    card.id = "testimonial";
+    this.createText("p", "Beary's has the best porridge! The atmosphere and customer service make you feel like you are sitting in the middle of the woods, eating like a bear! This is exactly the kind of place that I like to return to again and again.", card, true);
+    this.createText("h3", "Goldilocks", card);
+  }
 
-function createCard(){
-    const cards=document.querySelector(".cards");
+  createHoursCard() {
+    const card = this.createCard();
+    this.createText("h3", "Hours", card);
+    const hours = [
+      "Sunday: 8am - 8pm",
+      "Monday: 6am - 6pm",
+      "Tuesday: 6am - 6pm",
+      "Wednesday: 6am - 6pm",
+      "Thursday: 6am - 10pm",
+      "Friday: 6am - 10pm",
+      "Saturday: 8am - 10pm"
+    ];
+    hours.forEach(hour => this.createText("p", hour, card));
+  }
 
-    const card=document.createElement("div");
-    card.classList.add("card");
+  createLocationCard() {
+    const card = this.createCard();
+    this.createText("h3", "Location", card);
+    this.createText("p", "123 Forest Drive, Forestville, Maine", card);
+  }
+
+  createCard() {
+    const cards = this.container.querySelector(".cards");
+    const card = this.createElement("div", ["card"]);
     cards.appendChild(card);
     return card;
-}
+  }
 
-function createText(element, text, parent, bool=false){
-    const para=document.createElement(element);
-    para.textContent=text;
+  createText(element, text, parent, alignLeft = false) {
+    const para = this.createElement(element, [], { textContent: text });
+    if (alignLeft) para.style.textAlign = "left";
     parent.appendChild(para);
-    if(bool===true)
-        para.style.textAlign="left";
+  }
+
+  createElement(tag, classes = [], props = {}) {
+    const element = document.createElement(tag);
+    element.classList.add(...classes);
+    Object.assign(element, props);
+    return element;
+  }
+
+  createImage(src, classes = []) {
+    return this.createElement("img", classes, { src });
+  }
 }
 
-
-
-function createHomePage(){
-    createContainer();
-    createTitleAndCards("Beary's Breakfast Bar");
-
-    const card1=createCard();
-    card1.setAttribute("id", "kotak");
-    createText("p", "Beary's has the best porridge! The atmosphere and customer service make you feel like you are sitting in the middle of the woods, eating like a bear! This is exactly the kind of place that I like to return to again and again.", card1, true);
-    createText("h3", "Goldilocks", card1);
-
-    const card2=createCard();
-    createText("h3", "Hours", card2);
-    createText("p", "Sunday: 8am - 8pm", card2);
-    createText("p", "Monday: 6am - 6pm", card2);
-    createText("p", "Tuesday: 6am - 6pm", card2);
-    createText("p", "Wednesday: 6am - 6pm", card2);
-    createText("p", "Thursday: 6am - 10pm", card2);
-    createText("p", "Friday: 6am - 10pm", card2);
-    createText("p", "Saturday: 8am - 10pm", card2);
-
-    const card3=createCard();
-    createText("h3", "Location", card3);
-    createText("p", "123 Forest Drive, Forestville, Maine", card3);
-    
+export function createHomePage() {
+  const page = new RestaurantPage("#content");
+  page.createHomePage();
 }
-export {createHomePage};

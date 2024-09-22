@@ -1,76 +1,89 @@
 import Bee from "./bee.svg";
 
-function createContainer(){
-    const content=document.querySelector("#content");
-    const container=document.createElement("div");
-    container.classList.add("container");
-    content.appendChild(container);
-}
+class ContactPage {
+  constructor(contentId) {
+    this.content = document.querySelector(contentId);
+    this.container = null;
+  }
 
-function createTitleAndCards(text){
-    const container=document.querySelector(".container");
+  createContactPage() {
+    this.createContainer();
+    this.createTitleAndCards("Contact Us");
+    this.createContactCards(this.getContactInfo());
+  }
 
-    const title=document.createElement("div");
-    title.classList.add("title");
-    title.textContent=text;
+  createContainer() {
+    this.container = this.createElement("div", ["container"]);
+    this.content.appendChild(this.container);
+  }
 
-    const leftBee = new Image();
-    leftBee.src=Bee;
-    leftBee.classList.add('left');
+  createTitleAndCards(text) {
+    const title = this.createElement("div", ["title"], { textContent: text });
+    const leftBee = this.createImage(Bee, ["left"]);
+    const rightBee = this.createImage(Bee, ["right"]);
+    title.append(leftBee, rightBee);
+    this.container.appendChild(title);
 
-    const rightBee = new Image();
-    rightBee.src=Bee;
-    rightBee.classList.add('right');
+    const cards = this.createElement("div", ["cards"]);
+    this.container.appendChild(cards);
+  }
 
-    title.appendChild(leftBee);
-    title.appendChild(rightBee);
-    container.appendChild(title);
+  createContactCards(contactInfo) {
+    const cards = this.container.querySelector(".cards");
+    contactInfo.forEach(info => this.createContactCard(cards, info));
+  }
 
-    const cards=document.createElement("div");
-    cards.classList.add("cards");
-    container.appendChild(cards);
-}
+  createContactCard(parent, { name, role, phone, email }) {
+    const card = this.createElement("div", ["card"]);
+    this.createText("h3", name, card);
+    this.createText("p", role, card, true);
+    this.createText("p", phone, card, true);
+    this.createText("p", email, card, true);
+    parent.appendChild(card);
+  }
 
-function createCard(){
-    const cards=document.querySelector(".cards");
-
-    const card=document.createElement("div");
-    card.classList.add("card");
-    cards.appendChild(card);
-    return card;
-}
-
-function createText(element, text, parent, bool=false){
-    const para=document.createElement(element);
-    para.textContent=text;
+  createText(element, text, parent, alignLeft = false) {
+    const para = this.createElement(element, [], { textContent: text });
+    if (alignLeft) para.style.textAlign = "left";
     parent.appendChild(para);
-    if(bool===true)
-        para.style.textAlign="left";
+  }
+
+  createElement(tag, classes = [], props = {}) {
+    const element = document.createElement(tag);
+    element.classList.add(...classes);
+    Object.assign(element, props);
+    return element;
+  }
+
+  createImage(src, classes = []) {
+    return this.createElement("img", classes, { src });
+  }
+
+  getContactInfo() {
+    return [
+      {
+        name: "Mama Bear",
+        role: "Chef",
+        phone: "555-555-555",
+        email: "totallyRealEmail@notFake.com"
+      },
+      {
+        name: "Papa Bear",
+        role: "Manager",
+        phone: "444-444-444",
+        email: "perfectlyRealEmail@notFake.com"
+      },
+      {
+        name: "Baby Bear",
+        role: "Waiter",
+        phone: "333-333-333",
+        email: "utterlyRealEmail@notFake.com"
+      }
+    ];
+  }
 }
 
-
-
-function createContactPage(){
-    createContainer();
-    createTitleAndCards("Contact us");
-
-    const card1=createCard();
-    createText("h3", "Mama Bear", card1);
-    createText("p", "Chef", card1, true);
-    createText("p", "555-555-555", card1, true);
-    createText("p", "totallyRealEmail@notFake.com", card1, true);
-    
-    const card2=createCard();
-    createText("h3", "Papa Bear", card2);
-    createText("p", "Manager", card2, true);
-    createText("p", "444-444-444", card2, true);
-    createText("p", "perfectlyRealEmail@notFake.com", card2, true);
-
-    const card3=createCard();
-    createText("h3", "Baby Bear", card3);
-    createText("p", "Waiter", card3, true);
-    createText("p", "333-333-333", card3, true);
-    createText("p", "utterlyRealEmail@notFake.com", card3, true);
-    
+export function createContactPage() {
+  const contactPage = new ContactPage("#content");
+  contactPage.createContactPage();
 }
-export {createContactPage};
